@@ -1,0 +1,8 @@
+GameProject {
+ ID "MarkerAutoDelete"
+ GUID "62DAF16561B799EA"
+ TITLE "MarkerAutoDelete"
+ Dependencies {
+  "58D0FB3206B6F859"
+ }
+}
