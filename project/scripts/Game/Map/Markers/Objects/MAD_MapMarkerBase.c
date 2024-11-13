@@ -1,21 +1,21 @@
 modded class SCR_MapMarkerBase
 {
 	protected WorldTimestamp m_fInitTimeStamp;
-	protected float m_fLifetimeInSeconds = 5.0;//3600.0;
 	
-	protected int m_iAutoDeleteTimer = 0;
-	protected int m_iAutoDeleteTimerLimit = 120;
+	protected const ResourceName MAD_CONFIG_PATH = "{63516134AEC3E0E2}Configs/MAD/settings.conf";
+	protected ref MAD_Config m_MADConfig;
 	
 	// Checks if the marker has exceeded its lifetime
 	// returns true if it is still in its lifetime
 	// returns false if it has exceeded its lifetime
 	bool IsInLifeTime()
 	{
-		float fDifferenceInSeconds = m_fInitTimeStamp.PlusSeconds(m_fLifetimeInSeconds).DiffMilliseconds(GetCurrentTime()) / 1000;
-		m_wRoot.SetOpacity(fDifferenceInSeconds / m_fLifetimeInSeconds);
-		Print(fDifferenceInSeconds / m_fLifetimeInSeconds);
+		float fDifferenceInSeconds = m_fInitTimeStamp.PlusSeconds(m_MADConfig.m_fAutoDeleteDurationInSeconds).DiffMilliseconds(GetCurrentTime()) / 1000;
 		
-		if (GetCurrentTime().GreaterEqual(m_fInitTimeStamp.PlusSeconds(m_fLifetimeInSeconds)))
+		if (m_MADConfig.m_bChangeOpacityDuringLifetime)
+			m_wRoot.SetOpacity(fDifferenceInSeconds / m_MADConfig.m_fAutoDeleteDurationInSeconds);
+		
+		if (fDifferenceInSeconds <= 0.0)
 			return false;
 		else
 			return true;
@@ -65,5 +65,7 @@ modded class SCR_MapMarkerBase
 		OnMapLayerChanged(m_MapEntity.GetLayerIndex());
 		
 		m_fInitTimeStamp = GetCurrentTime();
+		
+		m_MADConfig = SCR_ConfigHelperT<MAD_Config>.GetConfigObject(MAD_CONFIG_PATH);
 	}
 }
